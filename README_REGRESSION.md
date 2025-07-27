@@ -17,7 +17,7 @@ This project implements a Bayesian Neural Network (BNN) from scratch using NumPy
 | Feature                | Traditional Neural Network (Frequentist)                               | Bayesian Neural Network (Bayesian)                                    |
 | :--------------------- | :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
 | **Parameters** | Point estimates (single, fixed values) for weights and biases.         | Probability distributions over weights and biases.                    |
-| **Training Goal** | Find the optimal set of parameters ($\theta^*$) that minimizes a loss function (e.g., MSE). | Infer the posterior distribution of parameters, $P(\theta | \text{Data})$. |
+| **Training Goal** | Find the optimal set of parameters weights and biases that minimizes a loss function (e.g., MSE). | Infer the posterior distribution of parameters,*Prob(theta/Data)*|
 | **Output** | A single prediction (e.g., a regression value).                        | A distribution of predictions (e.g., a distribution of regression values). |
 | **Uncertainty** | Lacks direct uncertainty quantification. Cannot distinguish between model uncertainty (epistemic) and data noise (aleatoric). | Provides intrinsic uncertainty quantification. Can model both epistemic (due to limited data) and aleatoric (inherent data noise) uncertainty. |
 | **Overfitting** | Prone to overfitting, relies heavily on regularization techniques (e.g., dropout, L1/L2). | Less prone to overfitting due to Bayesian regularization (priors on weights).                                |
@@ -43,8 +43,8 @@ This project utilizes **Markov Chain Monte Carlo (MCMC)**, specifically a **Lang
 **Key Concepts:**
 
 * **Posterior Distribution ($P(\theta | \text{Data})$):** The probability distribution of the model parameters ($\theta$) given the observed training data. It's proportional to Likelihood * Prior: $P(\theta | \text{Data}) \propto P(\text{Data} | \theta) P(\theta)$.
-* **Likelihood ($P(\text{Data} | \theta)$):** How probable the observed data is given a specific set of parameters $\theta$. For regression, this is typically a **Gaussian (Normal) log-likelihood**, assuming observations are normally distributed around the model's prediction.
-* **Prior ($P(\theta)$):** Our initial belief about the distribution of parameters *before* seeing any data. Here, a Gaussian (Normal) prior is used for weights and biases.
+* **Likelihood (Prob(Data|($\theta$)):** How probable the observed data is given a specific set of parameters $\theta$. For regression, this is typically a **Gaussian (Normal) log-likelihood**, assuming observations are normally distributed around the model's prediction.
+* **Prior (P($\theta$)):** Our initial belief about the distribution of parameters *before* seeing any data. Here, a Gaussian (Normal) prior is used for weights and biases.
 * **MCMC:** A class of algorithms used to sample from complex probability distributions (like the posterior) that are difficult to sample from directly.
 * **Metropolis-Hastings (M-H):** A fundamental MCMC algorithm. It proposes new states and accepts/rejects them based on a calculated probability.
 * **Langevin MCMC:** An extension of M-H that uses gradient information from the log-posterior to propose new states, making proposals more efficient.
@@ -163,21 +163,21 @@ This section presents the performance evaluation of the implemented Bayesian Neu
 #### **Bayesian Neural Network (BNN) Results:**
 Performance on Regression Dataset<br>
 
-Final Train RMSE (from posterior predictive mean): 0.5098<br>
-Final Train R2 (from posterior predictive mean): 0.6019 <br>
-Final Test RMSE (from posterior predictive mean): 0.5173 <br>
-Final Test R2 (from posterior predictive mean): 0.5908 <br>
+Final Train RMSE (from posterior predictive mean): 0.4419<br>
+Final Train R2 (from posterior predictive mean): 0.8055 <br>
+Final Test RMSE (from posterior predictive mean): 0.4557 <br>
+Final Test R2 (from posterior predictive mean): 0.7890<br>
 
-Average Train RMSE (across accepted finite samples): 0.5097 <br>
-Average Train R2 (across accepted finite samples): 0.6020 <br>
-Average Test RMSE (across accepted finite samples): 0.5172 <br>
-Average Test R2 (across accepted finite samples): 0.5910 <br>
+Average Train RMSE (across accepted finite samples): 0.4680 <br>
+Average Train R2 (across accepted finite samples): 0.7793 <br>
+Average Test RMSE (across accepted finite samples): 0.4771 <br>
+Average Test R2 (across accepted finite samples): 0.7692 <br>
 #### **Frequentist Neural Network Results:**
  Frequentist Neural Network Performance --- <br>
-Train RMSE: 0.7208 <br>
-Train R2 Score: 0.3200 <br>
-Test RMSE: 0.7299 <br>
-Test R2 Score: 0.3117 <br>
+Train RMSE:0.5179 <br>
+Train R2 Score: 0.6126 <br>
+Test RMSE:0.5559 <br>
+Test R2 Score: 0.5758<br>
  ---
 
 ### **Comparative Analysis:**
@@ -185,24 +185,23 @@ Test R2 Score: 0.3117 <br>
 Upon comparing the results on the California Housing dataset:
 
 1.  **RMSE:**
-    * The **Bayesian NN** achieves a significantly lower RMSE on both train (~0.510) and test (~0.517) sets.
-    * The **Frequentist NN** (simple Linear Regression example) showed higher RMSE values (~0.721 train, ~0.730 test).
+    * The **Bayesian NN** achieves a significantly lower RMSE on both train (~0.442) and test (~0.456) sets.
+    * The **Frequentist NN** shows higher RMSE values (~0.518 train, ~0.556 test).
     * Lower RMSE indicates better predictive accuracy (smaller average prediction error).
 
 2.  **R2 Score:**
-    * The **Bayesian NN** achieves a substantially higher R2 score on both train (~0.602) and test (~0.591).
-    * The **Frequentist NN** (Linear Regression) had much lower R2 scores (~0.320 train, ~0.312 test).
+    * The **Bayesian NN** achieves a substantially higher R2 score on both train (~0.806) and test (~0.789).
+    * The **Frequentist NN** has lower R2 scores (~0.613 train, ~0.576 test).
     * Higher R2 indicates that a larger proportion of the variance in the dependent variable is predictable from the independent variables, signifying a better fit.
 
 **Discussion:**
 
-In this regression task on the California Housing dataset, the custom-built **Bayesian Neural Network clearly outperforms the simple Frequentist Linear Regression model** in terms of both RMSE and R2 score. This demonstrates the BNN's ability to capture more complex non-linear relationships in the data, which a basic linear model cannot.
+In this regression task on the California Housing dataset, the custom-built **Bayesian Neural Network clearly outperforms the Frequentist Neural Network** in terms of both RMSE and R2 score. This demonstrates the BNN's ability to capture complex non-linear relationships in the data more effectively. The significantly higher R2 score of the BNN (approaching 0.8 on test) suggests it accounts for a much larger portion of the variance in housing prices compared to the Frequentist model, indicating a superior fit.
 
 Beyond the improved point predictions, the BNN offers the critical advantage of **uncertainty quantification**. While not directly shown in the RMSE/R2 numbers, the collected posterior samples allow for:
 
-* **Prediction Intervals:** Estimating a range (e.g., 95% credible interval) around each prediction, indicating the model's confidence.
+* **Prediction Intervals:** Es
+timating a range (e.g., 95% credible interval) around each prediction, indicating the model's confidence.
 * **Model Uncertainty:** Understanding which predictions the model is less certain about, which is invaluable in real-world applications (e.g., in high-stakes financial or engineering predictions).
 
 This project successfully demonstrates the implementation of a robust BNN for regression, highlighting its potential for improved performance and, more importantly, its capacity to provide crucial uncertainty estimates.
-
----
