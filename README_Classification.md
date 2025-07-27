@@ -15,7 +15,7 @@ This project implements a Bayesian Neural Network (BNN) from scratch using NumPy
 | Feature                | Traditional Neural Network (Frequentist)                               | Bayesian Neural Network (Bayesian)                                    |
 | :--------------------- | :--------------------------------------------------------------------- | :-------------------------------------------------------------------- |
 | **Parameters** | Point estimates (single, fixed values) for weights and biases.         | Probability distributions over weights and biases.                    |
-| **Training Goal** | Find the optimal set of parameters ($\theta^*$) that minimizes a loss function (e.g., MSE, Cross-Entropy). | Infer the posterior distribution of parameters, $P(\theta | \text{Data})$. |
+| **Training Goal** | Find the optimal set of parameters ($\theta^*$) that minimizes a loss function (e.g., MSE, Cross-Entropy). | Infer the posterior distribution of parameters, P(theta/Data). |
 | **Output** | A single prediction (e.g., a class probability, a regression value).   | A distribution of predictions (e.g., a distribution of class probabilities, a distribution of regression values). |
 | **Uncertainty** | Lacks direct uncertainty quantification. Cannot distinguish between model uncertainty (epistemic) and data noise (aleatoric). | Provides intrinsic uncertainty quantification. Can model both epistemic (due to limited data) and aleatoric (inherent data noise) uncertainty. |
 | **Overfitting** | Prone to overfitting, relies heavily on regularization techniques (e.g., dropout, L1/L2). | Less prone to overfitting due to Bayesian regularization (priors on weights).                                |
@@ -40,9 +40,9 @@ This project utilizes **Markov Chain Monte Carlo (MCMC)**, specifically a **Lang
 
 **Key Concepts:**
 
-* **Posterior Distribution ($P(\theta | \text{Data})$):** The probability distribution of the model parameters ($\theta$) given the observed training data. It's proportional to Likelihood * Prior: $P(\theta | \text{Data}) \propto P(\text{Data} | \theta) P(\theta)$.
-* **Likelihood ($P(\text{Data} | \theta)$):** How probable the observed data is given a specific set of parameters $\theta$. For classification, this is typically the multinomial (categorical) log-likelihood (Cross-Entropy).
-* **Prior ($P(\theta)$):** Our initial belief about the distribution of parameters *before* seeing any data. Here, a Gaussian (Normal) prior is used for weights and biases.
+* **Posterior Distribution (P( $\theta$|Data)):** The probability distribution of the model parameters ($\theta$) given the observed training data. It's proportional to Likelihood * Prior: $P(\theta | \text{Data}) \propto P(\text{Data} | \theta) P(\theta)$.
+* **Likelihood (P(Data|($\theta$))):** How probable the observed data is given a specific set of parameters $\theta$. For classification, this is typically the multinomial (categorical) log-likelihood (Cross-Entropy).
+* **Prior (P($\theta$)):** Our initial belief about the distribution of parameters *before* seeing any data. Here, a Gaussian (Normal) prior is used for weights and biases.
 * **MCMC:** A class of algorithms used to sample from complex probability distributions (like the posterior) that are difficult to sample from directly.
 * **Metropolis-Hastings (M-H):** A fundamental MCMC algorithm. It proposes new states and accepts/rejects them based on a calculated probability.
 * **Langevin MCMC:** An extension of M-H that uses gradient information from the log-posterior to propose new states, making proposals more efficient.
